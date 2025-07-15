@@ -5,11 +5,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import Backend from "../Api/ServersideApi"
-import axios from "axios";
 import { toast } from "sonner";
-const API_KEY = "AIzaSyAUD0_lbCNGNQfweERSsXniHmzsyUDIt5E";
 
 const inputVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -28,45 +25,8 @@ function DreamBoxForm() {
         try {
             setIsLoading(true);
 
-            const prompt = `Analyze the following user's dream and career aspirations: ${JSON.stringify(values)}. 
-          
-          Create a roadmap from beginner to advanced steps related to the user's dreams, including key skills, learning paths, 
-          potential career milestones, and relevant resource links. Return the result as a JSON object with "nodes" and "connections" properties, 
-          where nodes represent steps or milestones, and connections represent the flow. 
-          
-          Each node **must include at least 5 resource links** in the "resources" array, each with a valid URL and description. 
-          If a resource cannot be found, generate an appropriate and relevant alternative. 
-          
-          Ensure the JSON follows this structure:
-          {
-            "nodes": [
-              {
-                "id": "1",
-                "title": "Beginner Step",
-                "x": 0,
-                "y": 0,
-                "user": ${JSON.stringify(values)},
-                "resources": [
-                  {"url": "https://www.freecodecamp.org/", "description": "Free interactive coding lessons"},
-                  {"url": "https://www.udemy.com/", "description": "Online courses on various topics"},
-                  {"url": "https://www.coursera.org/", "description": "University-level courses on multiple skills"},
-                  {"url": "https://www.w3schools.com/", "description": "Beginner-friendly programming tutorials"},
-                  {"url": "https://roadmap.sh/", "description": "Step-by-step roadmap for learning tech skills"}
-                ],
-                "color": "#00FF00"
-              }
-            ],
-            "connections": [
-              {"from": "1", "to": "2"}
-            ]
-          }`;
-
-            const genAI = new GoogleGenerativeAI(API_KEY);
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-            const result = await model.generateContent(prompt);
-
-            let rawResponse = result.response.text().replace(/```(json)?\n?|```/g, "").trim();
-            const parsedResponse = JSON.parse(rawResponse);
+            const response = await Backend.generateRoadmap(values);
+            const parsedResponse = response.data;
 
             if (parsedResponse.nodes && parsedResponse.connections) {
                 const adjustedNodes = parsedResponse.nodes.map((node, index) => {
@@ -112,8 +72,8 @@ function DreamBoxForm() {
                 // Save back to localStorage
                 localStorage.setItem("roadmap-dream", JSON.stringify(existingRoadmaps))
                 
-                const response = await Backend.dreamboxfromdata(newRoadmap);
-                if (response.status === 200 || response.status === 201) {
+                const saveResponse = await Backend.dreamboxfromdata(newRoadmap);
+                if (saveResponse.status === 200 || saveResponse.status === 201) {
                     toast.success("Dream roadmap saved successfully!");
                 } else {
                     toast.error("Failed to save roadmap. Try again later.");

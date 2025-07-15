@@ -75,7 +75,7 @@ const dreamboxfromdata = (data)=> axiosClient.post("api/dreams/savedream",data);
 const GetAllDreamData = (data) =>axiosClient.get("api/dreams/alldream",data)
 const GetDreamByID =(roadmapId) => axiosClient.get(`api/dreams/getdream/${roadmapId}`)
 const DeleteDreamById = (roadmapId) =>axiosClient.delete(`api/dreams/deletedream/${roadmapId}`)
-
+const generateRoadmap = (data) => axiosClient.post("api/dreams/generate-roadmap", data);
 
 // ✅ Admin API Calls (Bearer Token Applied Automatically)
 const AdminLogincredentials = (data) =>
@@ -121,5 +121,5 @@ export default {
   GetAllDreamData,
   DeleteDreamById,
   GetDreamByID,
- 
+  generateRoadmap,
 };
