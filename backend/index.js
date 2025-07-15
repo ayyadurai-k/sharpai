@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
 const path = require('path'); 
-const dbConnection = require('./config/dbConnection')  
+const connectDB = require('./config/dbConnection');
 const resumeRouter = require('./router/resumeRouter');
 const AdminRouter = require('./router/AdminRouter');
 const DreamRouter = require("./router/DreamRouter");
@@ -126,7 +126,11 @@ app.use((req, res, next) => {
     next();
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is successfully running ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Access it at: http://localhost:${PORT}`);
-});
+// Bootstrap
+(async () => {
+  await connectDB(); // <-- Explicit DB connection
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running in ${process.env.NODE_ENV || 'development'} mode`);
+    console.log(`📡 Listening on http://localhost:${PORT}`);
+  });
+})();

@@ -1,29 +1,40 @@
-const mongoose = require("mongoose");
-require("dotenv").config();
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-const MONGODB_URI = `mongodb+srv://${process.env.DB_US}:${process.env.DB_PS}@${process.env.DB_CLUSTER}.mongodb.net/sharpresumeai?retryWrites=true&w=majority` 
+async function connectDB() {
+  const { MONGO_DB_URI } = process.env;
 
-// console.log("process.env.MONGODB_CLUSTER_URL", process.env.MONGODB_CLUSTER_URL);
+  if (!MONGO_DB_URI) {
+    console.error("❌ Missing MONGO_DB_URI in environment variables.");
+    process.exit(1);
+  }
 
-// const MONGODB_URI = 'mongodb://localhost:27017/sharpresumeai'
+  try {
+    await mongoose.connect(MONGO_DB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+      minPoolSize: 1,
+      family: 4,
+    });
 
-if (!MONGODB_URI) {
-  console.error(
-    "❌ MongoDB URI is missing. Set DB_URI in environment variables."
-  );
-  process.exit(1);
-}
+    console.log("✅ MongoDB connected");
 
-mongoose
-  .connect(MONGODB_URI, {
-    // useNewUrlParser: true,
-    // useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-  })
-  .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((error) => {
+    // Optional: Add lifecycle monitoring
+    mongoose.connection.on('disconnected', () => {
+      console.warn("⚠️ MongoDB disconnected");
+    });
+
+    process.on('SIGINT', async () => {
+      await mongoose.connection.close();
+      console.log("🔌 MongoDB connection closed gracefully");
+      process.exit(0);
+    });
+
+  } catch (error) {
     console.error("❌ MongoDB connection error:", error.message);
     process.exit(1);
-  });
+  }
+}
 
-module.exports = mongoose;
+module.exports = connectDB;
