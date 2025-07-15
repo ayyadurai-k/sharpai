@@ -111,10 +111,27 @@ const generateRoadmap = async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const result = await model.generateContent(prompt);
 
-    let rawResponse = result.response.text().replace(/```(json)?\n?|```/g, "").trim();
-    const parsedResponse = JSON.parse(rawResponse);
+    let rawResponse = result.response.text();
+    // Attempt to extract JSON string from the raw response
+    const jsonStartIndex = rawResponse.indexOf('{');
+    const jsonEndIndex = rawResponse.lastIndexOf('}');
+    let parsedResponse;
 
-    if (parsedResponse.nodes && parsedResponse.connections) {
+    if (jsonStartIndex !== -1 && jsonEndIndex !== -1 && jsonEndIndex > jsonStartIndex) {
+      const jsonString = rawResponse.substring(jsonStartIndex, jsonEndIndex + 1);
+      try {
+        parsedResponse = JSON.parse(jsonString);
+      } catch (parseError) {
+        console.error("JSON parsing error:", parseError);
+        console.error("Raw AI response:", rawResponse);
+        return res.status(500).json({ message: "Failed to parse AI response as JSON." });
+      }
+    } else {
+      console.error("No valid JSON structure found in AI response:", rawResponse);
+      return res.status(500).json({ message: "AI response did not contain a valid JSON structure." });
+    }
+
+    if (parsedResponse && parsedResponse.nodes && parsedResponse.connections) {
       return res.status(200).json(parsedResponse);
     } else {
       return res.status(400).json({ message: "AI response is missing required data." });
