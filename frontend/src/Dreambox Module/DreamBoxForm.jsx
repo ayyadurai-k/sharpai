@@ -161,7 +161,7 @@ function DreamBoxForm() {
                         {isLoading ? (
                             <>
                                 <Loader className="h-6 w-6 animate-spin text-white" />
-                                <span className="text-white">Generating... Wait a few minutes 123 </span>
+                                <span className="text-white">Generating... Wait a 10 seconds</span>
                             </>
                         ) : (
                             <>
