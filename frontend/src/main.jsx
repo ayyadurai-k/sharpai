@@ -52,7 +52,10 @@ const router = createBrowserRouter(
       path: "/",
       element: (
         <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
-          <Home />
+          <div className="flex items-center justify-center min-h-screen">
+            <h1 className="text-4xl font-bold text-gray-800">Work in progress</h1>
+          </div>
+           {/* <Home /> */}
         </Suspense>
       ),
     },
