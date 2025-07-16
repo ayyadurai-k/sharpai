@@ -35,8 +35,12 @@ jobs:
             git config --local --add safe.directory .
             git fetch --all --prune
             git reset --hard origin/live
+            
+            # Create production .env file for backend
+            echo "${{ secrets.BACKEND_PRODUCTION_ENV_FILE }}" > .env
+            
             rm -rf node_modules
-            npm ci --production --unsafe-perm
+            NODE_ENV=production npm ci --production --unsafe-perm
             pm2 reload sharpai-backend --update-env \
               || pm2 start index.js --name sharpai-backend --instances max --exec_mode cluster --update-env
             pm2 save
@@ -46,22 +50,7 @@ jobs:
     needs: deploy-backend
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Install & Build Frontend
-        working-directory: frontend
-        run: |
-          rm -rf node_modules package-lock.json
-          npm install
-          npm run build
-
-      - name: Clean remote frontend folder
+      - name: Deploy Frontend
         uses: appleboy/ssh-action@master
         with:
           host:     ${{ secrets.REMOTE_HOST }}
@@ -69,26 +58,16 @@ jobs:
           password: ${{ secrets.REMOTE_PASS }}
           port:     22
           script: |
-            rm -rf /var/www/sharpai/frontend/dist/*
-
-      - name: Copy Frontend dist to VPS
-        uses: appleboy/scp-action@master
-        with:
-          host:      ${{ secrets.REMOTE_HOST }}
-          username:  root
-          password:  ${{ secrets.REMOTE_PASS }}
-          port:      22
-          source:    "frontend/dist/*"
-          target:    "/var/www/sharpai/frontend/dist/"
-          recursive: true
-
-      - name: Fix perms & reload Nginx
-        uses: appleboy/ssh-action@master
-        with:
-          host:     ${{ secrets.REMOTE_HOST }}
-          username: root
-          password: ${{ secrets.REMOTE_PASS }}
-          port:     22
-          script: |
+            cd /var/www/sharpai/frontend
+            git config --local --add safe.directory .
+            git fetch --all --prune
+            git reset --hard origin/live
+            
+            # Create production .env file for frontend
+            echo "${{ secrets.FRONTEND_PRODUCTION_ENV_FILE }}" > .env.production
+            
+            rm -rf node_modules package-lock.json
+            NODE_ENV=production npm install
+            NODE_ENV=production npm run build
             chown -R www-data:www-data /var/www/sharpai/frontend/dist
             nginx -t && systemctl reload nginx
