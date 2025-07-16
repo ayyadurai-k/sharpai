@@ -19,12 +19,6 @@ import RecuriterCandiateResume from "./ResumeBox/Pages/RecuriterCandiateResume";
 import RecuriterSetting from "./ResumeBox/Pages/RecuriterSetting";
 import RecuriterDashboard from "./ResumeBox/Pages/RecuriterDashboard";
 
-
-
-
-
-
-
 // Lazy load components
 const Home = lazy(() => import("./components/home/LandingPage"));
 const App = lazy(() => import("./App.jsx"));
@@ -33,11 +27,19 @@ const Signin = lazy(() => import("./components/auth/SignIn"));
 const Signup = lazy(() => import("./components/auth/Signup"));
 const CreateResume = lazy(() => import("./components/custom/CreateResume"));
 const ResumeView = lazy(() => import("./components/Download-view/ResumeView"));
-const AtsCheckerMain = lazy(() => import("./components/custom/AtsChecker/AtsCheckerMain"));
+const AtsCheckerMain = lazy(() =>
+  import("./components/custom/AtsChecker/AtsCheckerMain")
+);
 const AdminLogin = lazy(() => import("./components/custom/Admin/Adminlogin"));
-const AdminRegister = lazy(() => import("./components/custom/Admin/AdminRegister"));
-const AdminDashboard = lazy(() => import("./components/custom/Admin/AdminDashboard"));
-const AdminDashboardUser = lazy(() => import("./components/custom/Admin/AdminDashboardUser"));
+const AdminRegister = lazy(() =>
+  import("./components/custom/Admin/AdminRegister")
+);
+const AdminDashboard = lazy(() =>
+  import("./components/custom/Admin/AdminDashboard")
+);
+const AdminDashboardUser = lazy(() =>
+  import("./components/custom/Admin/AdminDashboardUser")
+);
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const clerkFrontendApi = import.meta.env.VITE_CLERK_FRONTEND_API;
@@ -51,18 +53,19 @@ const router = createBrowserRouter(
     {
       path: "/",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
-          <div className="flex items-center justify-center min-h-screen">
-            <h1 className="text-4xl font-bold text-gray-800">Work in progress</h1>
-          </div>
-           {/* <Home /> */}
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
+          <Home />
         </Suspense>
       ),
     },
     {
       path: "/admin.login",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AdminLogin />
         </Suspense>
       ),
@@ -70,7 +73,9 @@ const router = createBrowserRouter(
     {
       path: "/admin.register",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AdminRegister />
         </Suspense>
       ),
@@ -78,7 +83,9 @@ const router = createBrowserRouter(
     {
       path: "/admin.dashboard",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AdminDashboard />
         </Suspense>
       ),
@@ -86,7 +93,9 @@ const router = createBrowserRouter(
     {
       path: "/admin.dashboard/user",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AdminDashboardUser />
         </Suspense>
       ),
@@ -94,7 +103,9 @@ const router = createBrowserRouter(
     {
       path: "/admin.dashboard/user-download",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AdminUserResumeDownload />
         </Suspense>
       ),
@@ -102,7 +113,9 @@ const router = createBrowserRouter(
     {
       path: "/admin.dashboard/user-download/:resumeId",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ResumeDownloadData />
         </Suspense>
       ),
@@ -110,7 +123,9 @@ const router = createBrowserRouter(
     {
       path: "auth/sign-in",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <Signin />
         </Suspense>
       ),
@@ -118,7 +133,9 @@ const router = createBrowserRouter(
     {
       path: "auth/sign-up",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <Signup />
         </Suspense>
       ),
@@ -127,7 +144,9 @@ const router = createBrowserRouter(
     {
       path: "dreambox",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ResumeBoxHome />
         </Suspense>
       ),
@@ -135,14 +154,19 @@ const router = createBrowserRouter(
     {
       path: "dreambox-form",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <DreamBoxFormLayout />
         </Suspense>
       ),
-    }, {
+    },
+    {
       path: "dreambox-dashboard/:id",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <DreamDashboard />
         </Suspense>
       ),
@@ -151,80 +175,109 @@ const router = createBrowserRouter(
     {
       path: "ResumeBox",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ResumeBoxHome />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "Recuriterregister",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterRegister />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "Recuriterlogin",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterLogin />
         </Suspense>
-      )
+      ),
     },
     {
       path: "/Recuriter-Resetpassword/:token",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ResetPassword />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "RecuriterForgotpassword",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ForgotPassword />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "VerifyCode",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <VerifyCode />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "Recuriter",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterLayout />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "Dashboard",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterDashboard />
         </Suspense>
-      )
-    }, {
+      ),
+    },
+    {
       path: "Candiateresume",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterCandiateResume />
         </Suspense>
-      )
+      ),
     },
     {
       path: "Setting",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <RecuriterSetting />
         </Suspense>
-      )
+      ),
     },
     {
       path: "my-resume/:resumeId/view",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <ResumeView />
         </Suspense>
       ),
@@ -233,7 +286,9 @@ const router = createBrowserRouter(
     {
       path: "*",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <Error />
         </Suspense>
       ),
@@ -241,7 +296,9 @@ const router = createBrowserRouter(
     {
       path: "/atschecker",
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <AtsCheckerMain />
         </Suspense>
       ),
@@ -249,7 +306,9 @@ const router = createBrowserRouter(
 
     {
       element: (
-        <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+        <Suspense
+          fallback={<div className="text-center mt-10">Loading...</div>}
+        >
           <App />
         </Suspense>
       ),
@@ -257,7 +316,9 @@ const router = createBrowserRouter(
         {
           path: "newresume",
           element: (
-            <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+            <Suspense
+              fallback={<div className="text-center mt-10">Loading...</div>}
+            >
               <Dashboard />
             </Suspense>
           ),
@@ -265,7 +326,9 @@ const router = createBrowserRouter(
         {
           path: "newresume/resume/:resumeId/edit",
           element: (
-            <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
+            <Suspense
+              fallback={<div className="text-center mt-10">Loading...</div>}
+            >
               <CreateResume />
             </Suspense>
           ),
@@ -280,14 +343,16 @@ const router = createBrowserRouter(
   }
 );
 
-
-
-
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} frontendApi={clerkFrontendApi}>
-      <RouterProvider router={router} future={{ v7_startTransition: true }} />
+    <ClerkProvider
+      publishableKey={PUBLISHABLE_KEY}
+      frontendApi={clerkFrontendApi}
+    >
+      {/* <RouterProvider router={router} future={{ v7_startTransition: true }} /> */}
+      <div className="flex items-center justify-center min-h-screen">
+        <h1 className="text-4xl font-bold text-gray-800">Work in progress</h1>
+      </div>
     </ClerkProvider>
   </React.StrictMode>
 );
