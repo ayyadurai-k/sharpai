@@ -166,7 +166,7 @@ function DreamBoxForm() {
                         ) : (
                             <>
                                 <Brain className="h-6 w-6" />
-                                <span>Generate</span>
+                                <span>Start</span>
                             </>
                         )}
                     </button>

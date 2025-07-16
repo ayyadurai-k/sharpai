@@ -1,4 +1,4 @@
-name: Deploy to VPS (password SSH)
+name: Deploy to VPS 
 
 on:
   push:
@@ -7,24 +7,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-backend:
+    name: Build & Deploy Backend
     runs-on: ubuntu-latest
     steps:
-      # 1) Get your code
-      - name: Checkout code
+      - name: Checkout backend
         uses: actions/checkout@v3
 
-      # 2) Build & test backend
-      - name: Setup Node.js for Backend
+      - name: Setup Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+        with: { node-version: '20' }
+
       - name: Install & Test Backend
         working-directory: backend
-        run: |
-          npm ci
+        run: npm ci
 
-      # 3) Deploy backend via SSH (password)
       - name: SSH & Deploy Backend
         uses: appleboy/ssh-action@master
         with:
@@ -34,7 +31,7 @@ jobs:
           port:     22
           script: |
             cd /var/www/sharpai/backend
-            git config --local --add safe.directory /var/www/sharpai/backend
+            git config --local --add safe.directory .
             git fetch --all --prune
             git reset --hard origin/live
             rm -rf node_modules
@@ -43,20 +40,25 @@ jobs:
               || pm2 start index.js --name sharpai-backend --instances max --exec_mode cluster --update-env
             pm2 save
 
-      # 4) Build frontend (fixed)
-      - name: Setup Node.js for Frontend
+  deploy-frontend:
+    name: Build & Deploy Frontend
+    needs: deploy-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - name: Install & Build Frontend (workaround Rollup)
+        with: { node-version: '20' }
+
+      - name: Install & Build Frontend
         working-directory: frontend
         run: |
-          # Remove lockfile & modules so optional deps reinstall correctly
           rm -rf node_modules package-lock.json
           npm install
           npm run build
 
-      # 5) Copy dist/ up via SCP (password)
       - name: Copy Frontend dist to VPS
         uses: appleboy/scp-action@master
         with:
@@ -67,7 +69,6 @@ jobs:
           source:   "frontend/dist/*"
           target:   "/var/www/sharpai/frontend/dist"
 
-      # 6) Fix permissions & reload Nginx
       - name: Fix perms & reload Nginx
         uses: appleboy/ssh-action@master
         with:
