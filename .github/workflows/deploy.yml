@@ -1,0 +1,81 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy-backend:
+    name: Build & Deploy Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install & Test Backend
+        run: |
+          cd backend
+          npm ci
+          npm test
+
+      - name: Deploy Backend via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /var/www/sharpai/backend
+            git fetch --all --prune
+            git reset --hard origin/main
+            npm ci --production
+            pm2 reload sharpai-backend --update-env || \
+            pm2 start index.js --name sharpai-backend --instances max --exec_mode cluster --update-env
+            pm2 save
+
+  build-and-deploy-frontend:
+    name: Build & Deploy Frontend
+    needs: build-and-deploy-backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install & Build Frontend
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Copy Frontend to VPS
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "frontend/dist/*"
+          target: "/var/www/sharpai/frontend/dist"
+
+      - name: Fix Permissions & Reload Nginx
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            sudo chown -R www-data:www-data /var/www/sharpai/frontend/dist
+            sudo nginx -t && sudo systemctl reload nginx
