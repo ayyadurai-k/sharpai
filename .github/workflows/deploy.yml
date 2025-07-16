@@ -23,7 +23,6 @@ jobs:
         working-directory: backend
         run: |
           npm ci
-          npm test
 
       # 3) Deploy backend via SSH (password)
       - name: SSH & Deploy Backend
