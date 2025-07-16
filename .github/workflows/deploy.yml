@@ -78,9 +78,9 @@ jobs:
           username:  root
           password:  ${{ secrets.REMOTE_PASS }}
           port:      22
-          source:    "frontend/dist"            # copy the whole dir
-          target:    "/var/www/sharpai/frontend/" # into the parent dir
-          recursive: true                       # recurse directories
+          source:    "frontend/dist/*"
+          target:    "/var/www/sharpai/frontend/dist/"
+          recursive: true
 
       - name: Fix perms & reload Nginx
         uses: appleboy/ssh-action@master
