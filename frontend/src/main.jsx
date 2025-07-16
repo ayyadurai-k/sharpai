@@ -11,7 +11,7 @@ import DreamBoxFormLayout from "./Dreambox Module/DreamBoxFromLayout";
 import ResumeBoxHome from "./ResumeBox/Pages/ResumeBoxHome";
 import RecuriterRegister from "./ResumeBox/Components/RecuriterRegister";
 import RecuriterLogin from "./ResumeBox/Components/RecuriterLogin";
-import VerifyCode from "./ResumeBox/Components/Verifycode";
+import VerifyCode from "./ResumeBox/Components/VerifyCode";
 import ResetPassword from "./ResumeBox/Components/ResetPassword";
 import ForgotPassword from "./ResumeBox/Components/ForgotPassword";
 import RecuriterLayout from "./ResumeBox/Pages/RecuriterLayout";
