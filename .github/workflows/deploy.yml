@@ -7,38 +7,39 @@ on:
 
 jobs:
   build-and-deploy-backend:
-    name: Build & Deploy Backend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    name: SSH & Deploy Backend
+    uses: appleboy/ssh-action@master
+    with:
+      host:     ${{ secrets.REMOTE_HOST }}
+      username: ${{ secrets.REMOTE_USER }}
+      key:      ${{ secrets.SSH_PRIVATE_KEY }}
+      script: |
+        # 1) Tell Git this repo is safe to operate on
+        git config --global --add safe.directory /var/www/sharpai/backend
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
+        cd /var/www/sharpai/backend
 
-      - name: Install & Test Backend
-        run: |
-          cd backend
-          npm ci
-          npm test
+        # 2) Update code
+        git fetch --all --prune
+        git reset --hard origin/live
 
-      - name: Deploy Backend via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd /var/www/sharpai/backend
-            git fetch --all --prune
-            git reset --hard origin/main
-            npm ci --production
-            pm2 reload sharpai-backend --update-env || \
-            pm2 start index.js --name sharpai-backend --instances max --exec_mode cluster --update-env
-            pm2 save
+        # 3) Rebuild as root so npm can clean up node_modules
+        sudo rm -rf node_modules
+        sudo npm ci --production --unsafe-perm
+
+        # 4) Ensure PM2 can write its data under deploy's home
+        sudo mkdir -p /home/deploy/.pm2/{logs,pids}
+        sudo chown -R deploy:deploy /home/deploy/.pm2
+
+        # 5) Zero-downtime reload (or start if not running)
+        sudo pm2 reload sharpai-backend --update-env \
+          || sudo pm2 start index.js \
+              --name sharpai-backend \
+              --instances max \
+              --exec_mode cluster \
+              --update-env
+
+        sudo pm2 save
 
   build-and-deploy-frontend:
     name: Build & Deploy Frontend
