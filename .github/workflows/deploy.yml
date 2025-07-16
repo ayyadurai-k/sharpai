@@ -79,7 +79,7 @@ jobs:
           password:  ${{ secrets.REMOTE_PASS }}
           port:      22
           source:    "frontend/dist"            # copy the whole dir
-          target:    "/var/www/sharpai" # into the parent dir
+          target:    "/var/www/sharpai/frontend/" # into the parent dir
           recursive: true                       # recurse directories
 
       - name: Fix perms & reload Nginx
