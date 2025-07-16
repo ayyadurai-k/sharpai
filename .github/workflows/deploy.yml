@@ -74,12 +74,13 @@ jobs:
       - name: Copy Frontend dist to VPS
         uses: appleboy/scp-action@master
         with:
-          host:     ${{ secrets.REMOTE_HOST }}
-          username: root
-          password: ${{ secrets.REMOTE_PASS }}
-          port:     22
-          source:   "frontend/dist/*"
-          target:   "/var/www/sharpai/frontend/dist"
+          host:      ${{ secrets.REMOTE_HOST }}
+          username:  root
+          password:  ${{ secrets.REMOTE_PASS }}
+          port:      22
+          source:    "frontend/dist"            # copy the whole dir
+          target:    "/var/www/sharpai/frontend" # into the parent dir
+          recursive: true                       # recurse directories
 
       - name: Fix perms & reload Nginx
         uses: appleboy/ssh-action@master
