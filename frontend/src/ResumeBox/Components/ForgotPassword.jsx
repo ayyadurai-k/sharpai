@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { toast } from "sonner";
 import logo1 from "../../assets/mainlogo.png";
-import forgotpassword from "../../assets/forgot.png";
+import forgotpassword from "../../assets/Forgot.png";
 import Backend from "../../Api/Recruiter_Api";
 import { useNavigate } from "react-router-dom";
 
