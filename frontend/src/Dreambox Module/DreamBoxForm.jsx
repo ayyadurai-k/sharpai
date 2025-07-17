@@ -161,12 +161,12 @@ function DreamBoxForm() {
                         {isLoading ? (
                             <>
                                 <Loader className="h-6 w-6 animate-spin text-white" />
-                                <span className="text-white">Generating... Wait a 10 seconds</span>
+                                <span className="text-white">Generating...</span>
                             </>
                         ) : (
                             <>
                                 <Brain className="h-6 w-6" />
-                                <span>Start 123 Ayya</span>
+                                <span>Generate</span>
                             </>
                         )}
                     </button>
